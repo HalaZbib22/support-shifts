@@ -1,0 +1,127 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function me() { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data; }
+    function isAdmin() { return signedIn() && me().isAdmin == true; }
+    function myRole() { return me().role; }
+    function weekStatus(weekId) {
+      return get(/databases/$(database)/documents/weeks/$(weekId)).data.status;
+    }
+
+    // Profiles: anyone signed in can read the roster (needed to show names on seats).
+    // A user may create their own profile with no role and no admin flag; only admins change those.
+    match /users/{uid} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.role == null
+        && request.resource.data.isAdmin == false;
+      allow update: if isAdmin()
+        || (request.auth.uid == uid
+            && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'isAdmin']));
+      allow delete: if false;
+    }
+
+    match /weeks/{weekId} {
+      allow read: if signedIn();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /swaps/{swapId} {
+      // Same-role trades only, and you may only offer a seat you actually hold.
+      function shiftSeat(shiftId, role) {
+        return get(/databases/$(database)/documents/shifts/$(shiftId)).data.seats[role];
+      }
+      function shiftWeek(shiftId) {
+        return get(/databases/$(database)/documents/shifts/$(shiftId)).data.weekId;
+      }
+
+      allow read: if signedIn()
+        && (isAdmin() || resource.data.fromUid == request.auth.uid || resource.data.toUid == request.auth.uid);
+
+      allow create: if signedIn()
+        && request.resource.data.fromUid == request.auth.uid
+        && request.resource.data.toUid != request.auth.uid
+        && request.resource.data.status == 'pending'
+        && request.resource.data.resolvedAt == null
+        && request.resource.data.role == myRole()
+        && myRole() in ['fe', 'mobile', 'be_l1']
+        && shiftSeat(request.resource.data.giveShiftId, myRole()) == request.auth.uid
+        && shiftSeat(request.resource.data.takeShiftId, myRole()) == request.resource.data.toUid
+        && weekStatus(shiftWeek(request.resource.data.giveShiftId)) == 'open'
+        && weekStatus(shiftWeek(request.resource.data.takeShiftId)) == 'open';
+
+      // The recipient accepts or declines; the sender cancels. Only the status closes out.
+      allow update: if signedIn()
+        && resource.data.status == 'pending'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'resolvedAt'])
+        && ((resource.data.toUid == request.auth.uid && request.resource.data.status in ['accepted', 'declined'])
+            || (resource.data.fromUid == request.auth.uid && request.resource.data.status == 'cancelled'));
+
+      allow delete: if false;
+    }
+
+    match /shifts/{shiftId} {
+      allow read: if signedIn();
+      allow create: if isAdmin();
+      allow delete: if isAdmin();
+
+      function weekIsOpen() { return weekStatus(resource.data.weekId) == 'open'; }
+      function iHoldASeat() {
+        return resource.data.seats.fe == request.auth.uid
+          || resource.data.seats.mobile == request.auth.uid
+          || resource.data.seats.be_l1 == request.auth.uid;
+      }
+
+      // — claiming and releasing your own role's seat —
+      function onlyMySeatChanged() {
+        return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['seats'])
+          && request.resource.data.seats.diff(resource.data.seats).affectedKeys().hasOnly([myRole()]);
+      }
+      function claiming() {
+        return resource.data.seats[myRole()] == null
+          && request.resource.data.seats[myRole()] == request.auth.uid;
+      }
+      function releasing() {
+        return resource.data.seats[myRole()] == request.auth.uid
+          && request.resource.data.seats[myRole()] == null;
+      }
+
+      // — a seat moving because an accepted swap says so —
+      // The client writes swapId alongside the seat; we verify that swap is pending,
+      // names this shift, and that the seat moves between exactly its two parties.
+      function swap() {
+        return get(/databases/$(database)/documents/swaps/$(request.resource.data.swapId)).data;
+      }
+      function swapMove() {
+        return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['seats', 'swapId'])
+          && request.resource.data.seats.diff(resource.data.seats).affectedKeys().hasOnly([swap().role])
+          && swap().status == 'pending'
+          && swap().toUid == request.auth.uid
+          && (shiftId == swap().giveShiftId || shiftId == swap().takeShiftId)
+          && ((resource.data.seats[swap().role] == swap().fromUid
+               && request.resource.data.seats[swap().role] == swap().toUid)
+              || (resource.data.seats[swap().role] == swap().toUid
+                  && request.resource.data.seats[swap().role] == swap().fromUid));
+      }
+
+      // — the handover note, written by any of the three seat-holders —
+      function handoverOnly() {
+        return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['handover'])
+          && (!('handover' in request.resource.data)
+              || (request.resource.data.handover.updatedBy == request.auth.uid
+                  && request.resource.data.handover.text is string
+                  && request.resource.data.handover.text.size() <= 4000));
+      }
+
+      allow update: if isAdmin()
+        || (signedIn() && weekIsOpen() && (
+              (myRole() in ['fe', 'mobile', 'be_l1'] && onlyMySeatChanged() && (claiming() || releasing()))
+              || swapMove()
+              || (iHoldASeat() && handoverOnly())
+           ));
+    }
+  }
+}
