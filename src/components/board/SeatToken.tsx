@@ -16,7 +16,7 @@ export interface SeatState {
 /** Visual grammar from the design: only "mine" is filled; only "claimable" invites. */
 export function seatStyle(s: SeatState) {
   const c = ROLE[s.role];
-  if (s.isMine) return { label: s.pending ? "You · swap pending" : "You", weight: 600, bg: c.fill, fg: "#fff", border: `1px solid ${c.fill}`, badge: "rgba(255,255,255,0.8)", plus: false };
+  if (s.isMine) return { label: s.pending ? "You · swap pending" : "You", weight: 600, bg: c.fill, fg: T.onFill, border: `1px solid ${c.fill}`, badge: T.onFillSoft, plus: false };
   if (s.holderName === null && s.claimable) return { label: "Claim seat", weight: 600, bg: c.tint, fg: c.deep, border: `1.5px dashed ${c.fill}`, badge: c.deep, plus: true };
   if (s.holderName === null) return { label: s.past ? "Unfilled" : "Open", weight: 400, bg: "transparent", fg: T.n600, border: `1px dashed ${T.n400}`, badge: T.n500, plus: false };
   return { label: s.holderName, weight: 400, bg: c.tint, fg: T.text, border: "1px solid transparent", badge: c.deep, plus: false };

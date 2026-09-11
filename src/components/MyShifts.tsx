@@ -44,7 +44,7 @@ export function MyShifts({ shifts, weeks, users, uid, now, onOpen, limit = 4 }: 
                 <Typography sx={{ fontFamily: T.fontHeading, fontWeight: 600, fontSize: 20 }}>
                   {DAY_LONG[s.day].slice(0, 3)} {format(parseISO(s.date), "d MMM")}
                 </Typography>
-                <Box component="span" sx={{ fontSize: 10, letterSpacing: "0.06em", fontWeight: 600, color: "#fff", background: c.fill, px: 0.75, py: "2px" }}>{c.short}</Box>
+                <Box component="span" sx={{ fontSize: 10, letterSpacing: "0.06em", fontWeight: 600, color: T.onFill, background: c.fill, px: 0.75, py: "2px" }}>{c.short}</Box>
               </Box>
               <Typography variant="body2" color="text.secondary">{SLOT_LABEL[s.slot]} · {SLOT_TIMES[s.slot].label}</Typography>
               <Box sx={{ mt: 1, display: "flex", flexDirection: "column", gap: 0.25 }}>

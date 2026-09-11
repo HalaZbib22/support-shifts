@@ -16,8 +16,8 @@ function GhostFrame({ anchor, children }: { anchor: Date; children: React.ReactN
       <Box />
       {DAYS.map((d, i) => (
         <Box key={d} sx={{ p: "8px 6px 6px", borderLeft: `1px solid ${T.rule}` }}>
-          <Typography variant="subtitle2" sx={{ fontSize: 10, color: "rgba(29,31,32,0.5)" }}>{DAY_LABEL[d]}</Typography>
-          <Typography sx={{ fontFamily: T.fontHeading, fontWeight: 600, fontSize: 24, lineHeight: 1.1, color: "rgba(29,31,32,0.4)" }}>{format(addDays(start, i), "d")}</Typography>
+          <Typography variant="subtitle2" sx={{ fontSize: 10, color: T.muted }}>{DAY_LABEL[d]}</Typography>
+          <Typography sx={{ fontFamily: T.fontHeading, fontWeight: 600, fontSize: 24, lineHeight: 1.1, color: T.muted38 }}>{format(addDays(start, i), "d")}</Typography>
         </Box>
       ))}
       {children}
@@ -28,7 +28,7 @@ function GhostFrame({ anchor, children }: { anchor: Date; children: React.ReactN
 export function BoardEmpty({ anchor, title, body, onBack }: { anchor: Date; title: string; body: string; onBack?: () => void }) {
   return (
     <GhostFrame anchor={anchor}>
-      <Box sx={{ gridColumn: "1 / -1", height: 270, borderTop: `1px solid ${T.rule}`, display: "grid", placeItems: "center", background: "#ececee" }}>
+      <Box sx={{ gridColumn: "1 / -1", height: 270, borderTop: `1px solid ${T.rule}`, display: "grid", placeItems: "center", background: T.off }}>
         <Box sx={{ textAlign: "center", maxWidth: 300, px: 2 }}>
           <Box sx={{ width: 44, height: 44, border: `1px dashed ${T.n400}`, mx: "auto", mb: 1.5, display: "flex", alignItems: "center", justifyContent: "center", color: T.n600 }}>
             <CalendarDays size={20} strokeWidth={1.5} />
@@ -51,7 +51,7 @@ export function BoardSkeleton({ anchor }: { anchor: Date }) {
           {DAYS.map((d) => {
             const on = slotsForDay(d).includes(slot);
             return (
-              <Box key={d} sx={{ height: 90, borderTop: `1px solid ${T.rule}`, borderLeft: `1px solid ${T.rule}`, p: "6px 5px", display: "flex", flexDirection: "column", gap: 0.5, background: on ? "transparent" : "#ececee" }}>
+              <Box key={d} sx={{ height: 90, borderTop: `1px solid ${T.rule}`, borderLeft: `1px solid ${T.rule}`, p: "6px 5px", display: "flex", flexDirection: "column", gap: 0.5, background: on ? "transparent" : T.off }}>
                 {on && [0, 1, 2].map((i) => <Skeleton key={i} variant="rectangular" height={20} />)}
               </Box>
             );

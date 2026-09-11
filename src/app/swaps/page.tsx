@@ -168,7 +168,7 @@ export default function SwapsPage() {
                 <TableRow key={s.id}>
                   <TableCell>{person(other, s.createdAt, s.role)}</TableCell>
                   <TableCell>{shiftCell(takeFirst ? s.giveShiftId : s.takeShiftId)}</TableCell>
-                  <TableCell sx={{ color: "rgba(29,31,32,0.5)" }}><ArrowLeftRight size={16} strokeWidth={1.5} /></TableCell>
+                  <TableCell sx={{ color: T.muted }}><ArrowLeftRight size={16} strokeWidth={1.5} /></TableCell>
                   <TableCell>{shiftCell(takeFirst ? s.takeShiftId : s.giveShiftId)}</TableCell>
                   <TableCell align="right">
                     {s.status !== "pending" ? (

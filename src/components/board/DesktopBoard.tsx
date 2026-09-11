@@ -37,10 +37,10 @@ export function DesktopBoard({ anchor, shifts, ctx, onOpen }: { anchor: Date; sh
         return (
           <Box key={day} sx={{ display: "flex", flexDirection: "column", borderLeft: `1px solid ${T.rule}`, minWidth: 0 }}>
             <Box sx={{ height: 70, px: 1.25, pt: 1.25, position: "relative", opacity: past ? 0.55 : 1 }}>
-              <Typography variant="subtitle2" sx={{ color: today ? T.accent700 : "rgba(29,31,32,0.6)" }}>{DAY_LABEL[day]}</Typography>
+              <Typography variant="subtitle2" sx={{ color: today ? T.accent700 : T.muted60 }}>{DAY_LABEL[day]}</Typography>
               <Box sx={{ display: "flex", alignItems: "baseline", gap: 1 }}>
                 <Typography sx={{ fontFamily: T.fontHeading, fontWeight: 600, fontSize: 32, lineHeight: 1.1 }}>{format(date, "d")}</Typography>
-                {today && <Box component="span" sx={{ fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", background: T.accent, color: "#fff", px: 0.75, py: "1px" }}>Today</Box>}
+                {today && <Box component="span" sx={{ fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", background: T.accent, color: T.onFill, px: 0.75, py: "1px" }}>Today</Box>}
               </Box>
               {today && <Box sx={{ position: "absolute", left: 0, right: 0, bottom: -1, height: 3, background: T.accent }} />}
             </Box>
@@ -49,8 +49,8 @@ export function DesktopBoard({ anchor, shifts, ctx, onOpen }: { anchor: Date; sh
               const on = slotsForDay(day).includes(slot);
               if (!on) {
                 return (
-                  <Box key={slot} sx={{ height: ROW, background: "#ececee", borderTop: slot === "morning" ? "1px solid rgba(29,31,32,0.14)" : "1px solid rgba(29,31,32,0.06)", display: "flex", justifyContent: "center", pt: 1.5 }}>
-                    {slot === "morning" && <Typography sx={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(29,31,32,0.38)" }}>Office hours</Typography>}
+                  <Box key={slot} sx={{ height: ROW, background: T.off, borderTop: slot === "morning" ? "1px solid ${T.rule}" : "1px solid ${T.hairline}", display: "flex", justifyContent: "center", pt: 1.5 }}>
+                    {slot === "morning" && <Typography sx={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: T.muted38 }}>Office hours</Typography>}
                   </Box>
                 );
               }
@@ -60,7 +60,7 @@ export function DesktopBoard({ anchor, shifts, ctx, onOpen }: { anchor: Date; sh
                 <Box key={slot} sx={{ height: ROW, borderTop: `1px solid ${T.rule}`, p: "8px 8px 6px", display: "flex", flexDirection: "column", gap: "5px" }}>
                   {shift && SEAT_ROLES.map((r) => <SeatToken key={r} seat={seatState(shift, r, ctx)} onClick={() => onOpen(shift)} />)}
                   {foot && (
-                    <Box sx={{ mt: "auto", display: "flex", alignItems: "center", gap: 0.6, fontSize: 11, color: foot.live ? T.accent700 : "rgba(29,31,32,0.55)", minWidth: 0 }}>
+                    <Box sx={{ mt: "auto", display: "flex", alignItems: "center", gap: 0.6, fontSize: 11, color: foot.live ? T.accent700 : T.muted, minWidth: 0 }}>
                       {foot.live && <Box component="span" sx={{ width: 7, height: 7, background: T.accent, flex: "none" }} />}
                       {foot.note && <FileText size={12} strokeWidth={1.5} style={{ flex: "none" }} />}
                       <Box component="span" sx={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{foot.text}</Box>

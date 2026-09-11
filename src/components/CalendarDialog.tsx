@@ -51,7 +51,7 @@ export function CalendarDialog({ open, onClose, uid, token }: { open: boolean; o
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <Box sx={{ p: "20px 22px 16px", borderBottom: "1px solid rgba(29,31,32,0.12)" }}>
+      <Box sx={{ p: "20px 22px 16px", borderBottom: "1px solid ${T.edge}" }}>
         <Typography variant="h3">Your shifts in Google Calendar</Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
           Subscribe once and the shifts you hold appear automatically — including when you swap or release one.
@@ -120,7 +120,7 @@ export function CalendarDialog({ open, onClose, uid, token }: { open: boolean; o
         </Typography>
       </Box>
 
-      <Box sx={{ p: "12px 22px 18px", borderTop: "1px solid rgba(29,31,32,0.12)", display: "flex", justifyContent: "flex-end" }}>
+      <Box sx={{ p: "12px 22px 18px", borderTop: "1px solid ${T.edge}", display: "flex", justifyContent: "flex-end" }}>
         <Button variant="outlined" onClick={onClose}>Done</Button>
       </Box>
     </Dialog>

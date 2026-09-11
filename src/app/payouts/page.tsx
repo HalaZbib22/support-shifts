@@ -117,7 +117,7 @@ export default function PayoutsPage() {
                   {format(m, "MMM")}{i === months.length - 1 ? " · to date" : ""}
                 </TableCell>
               ))}
-              <TableCell align="right" sx={{ color: "rgba(29,31,32,0.45) !important" }}>Pending</TableCell>
+              <TableCell align="right" sx={{ color: `${T.muted45} !important` }}>Pending</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -140,7 +140,7 @@ export default function PayoutsPage() {
                     <TableCell key={i} align="right">{money(n * PAY_PER_SHIFT)}</TableCell>
                   ),
                 )}
-                <TableCell align="right" sx={{ color: "rgba(29,31,32,0.45)" }}>{r.pending ? `+${money(r.pending * PAY_PER_SHIFT)}` : "—"}</TableCell>
+                <TableCell align="right" sx={{ color: T.muted45 }}>{r.pending ? `+${money(r.pending * PAY_PER_SHIFT)}` : "—"}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -152,7 +152,7 @@ export default function PayoutsPage() {
                 {totals.map((n, i) => (
                   <TableCell key={i} align="right" sx={i === months.length - 1 ? { fontFamily: T.fontHeading, fontWeight: 600, fontSize: 20 } : undefined}>{money(n * PAY_PER_SHIFT)}</TableCell>
                 ))}
-                <TableCell align="right" sx={{ color: "rgba(29,31,32,0.45)" }}>{pendingTotal ? `+${money(pendingTotal * PAY_PER_SHIFT)}` : "—"}</TableCell>
+                <TableCell align="right" sx={{ color: T.muted45 }}>{pendingTotal ? `+${money(pendingTotal * PAY_PER_SHIFT)}` : "—"}</TableCell>
               </TableRow>
             </TableFooter>
           )}

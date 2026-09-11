@@ -37,7 +37,7 @@ export function PhoneBoard({ anchor, shifts, ctx, onOpen }: { anchor: Date; shif
           }
           return (
             <Box key={d} component="button" type="button" onClick={() => setSel(i)} sx={{ all: "unset", cursor: "pointer", p: "8px 0 6px", textAlign: "center", borderBottom: `3px solid ${sel === i ? T.text : "transparent"}`, opacity: past ? 0.55 : 1 }}>
-              <Typography sx={{ fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", color: today ? T.accent700 : "rgba(29,31,32,0.6)" }}>{d[0]!.toUpperCase()}</Typography>
+              <Typography sx={{ fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", color: today ? T.accent700 : T.muted60 }}>{d[0]!.toUpperCase()}</Typography>
               <Typography sx={{ fontFamily: T.fontHeading, fontWeight: 600, fontSize: 22, lineHeight: 1.1 }}>{format(addDays(start, i), "d")}</Typography>
               <Box sx={{ display: "flex", justifyContent: "center", gap: "2px", mt: 0.5, height: 4 }}>
                 {dots.slice(0, 3).map((c, k) => <Box key={k} sx={{ width: 4, height: 4, background: c }} />)}

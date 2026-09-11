@@ -61,7 +61,7 @@ export function ShiftDrawer({ shift, allShifts, ctx, counts, onClose, onToast }:
     <Drawer anchor={phone ? "bottom" : "right"} open={!!shift} onClose={onClose} slotProps={{ paper: { sx: { width: phone ? "100%" : 440, maxHeight: phone ? "92vh" : "100%", borderTop: phone ? `1px solid ${T.divider}` : "none" } } }}>
       {live && (
         <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100%" }}>
-          <Box sx={{ p: "18px 22px 14px", borderBottom: "1px solid rgba(29,31,32,0.12)", display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+          <Box sx={{ p: "18px 22px 14px", borderBottom: "1px solid ${T.edge}", display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
             <Box>
               <Typography variant="subtitle2" color="text.secondary">{DAY_LONG[live.day]} {format(parseISO(live.date), "d MMM")} · {SLOT_LABEL[live.slot]}</Typography>
               <Typography variant="h2">{SLOT_TIMES[live.slot].label}</Typography>
@@ -81,13 +81,13 @@ export function ShiftDrawer({ shift, allShifts, ctx, counts, onClose, onToast }:
               const row = { display: "flex", alignItems: "center", gap: 1.25, minHeight: 48, px: 1.5 } as const;
               if (st.isMine) {
                 return (
-                  <Box key={r} sx={{ ...row, background: c.fill, color: "#fff" }}>
+                  <Box key={r} sx={{ ...row, background: c.fill, color: T.onFill }}>
                     <Box component="span" sx={{ fontSize: 10, letterSpacing: "0.06em", fontWeight: 600, width: 22 }}>{c.short}</Box>
                     <Box sx={{ flex: 1, fontWeight: 600 }}>You{st.pending ? " · swap pending" : ""}</Box>
                     {status === "open" && !st.past && (
                       <>
-                        <Button size="small" disabled={busy || st.pending} onClick={() => setSwapOpen(true)} sx={{ height: 30, color: "#fff", border: "1px solid rgba(255,255,255,0.55)", fontSize: 13 }}>Request swap</Button>
-                        <Button size="small" disabled={busy || st.pending} onClick={() => run(() => releaseSeat(live.id, r, ctx.uid), "Seat released")} sx={{ height: 30, color: "#fff", border: "1px solid rgba(255,255,255,0.55)", fontSize: 13 }}>Release</Button>
+                        <Button size="small" disabled={busy || st.pending} onClick={() => setSwapOpen(true)} sx={{ height: 30, color: T.onFill, border: "1px solid ${T.onFillLine}", fontSize: 13 }}>Request swap</Button>
+                        <Button size="small" disabled={busy || st.pending} onClick={() => run(() => releaseSeat(live.id, r, ctx.uid), "Seat released")} sx={{ height: 30, color: T.onFill, border: "1px solid ${T.onFillLine}", fontSize: 13 }}>Release</Button>
                       </>
                     )}
                   </Box>
@@ -99,7 +99,7 @@ export function ShiftDrawer({ shift, allShifts, ctx, counts, onClose, onToast }:
                     <Box component="span" sx={{ fontSize: 10, letterSpacing: "0.06em", fontWeight: 600, width: 22 }}>{c.short}</Box>
                     <Box sx={{ flex: 1, fontWeight: 600 }}>Open · your role</Box>
                     <Blueprint sx={{ border: "none" }}>
-                      <Button variant="contained" size="small" disabled={busy} onClick={() => run(() => claimSeat(live.id, r, ctx.uid), `Claimed ${shiftShort(live)}`)} startIcon={<Plus size={13} strokeWidth={2} />} sx={{ height: 32, background: c.fill, "&:hover": { background: c.deep } }}>
+                      <Button variant="contained" size="small" disabled={busy} onClick={() => run(() => claimSeat(live.id, r, ctx.uid), `Claimed ${shiftShort(live)}`)} startIcon={<Plus size={13} strokeWidth={2} />} sx={{ height: 32, background: c.fill, color: T.onFill, "&:hover": { background: c.mid } }}>
                         Claim seat · ${PAY_PER_SHIFT}
                       </Button>
                     </Blueprint>
@@ -124,7 +124,7 @@ export function ShiftDrawer({ shift, allShifts, ctx, counts, onClose, onToast }:
               );
             })}
             {ctx.myRole && live.seats[ctx.myRole] === null && seatState(live, ctx.myRole, ctx).claimable && (
-              <Box sx={{ p: "10px 12px", border: `1px solid ${T.rule}`, fontSize: 13, mt: 0.75, color: "rgba(29,31,32,0.75)" }}>
+              <Box sx={{ p: "10px 12px", border: `1px solid ${T.rule}`, fontSize: 13, mt: 0.75, color: T.muted70 }}>
                 Claiming makes this your {ordinal(myCount + 1)} shift in {format(parseISO(live.date), "MMMM")}. Team median is {teamMedian}.
               </Box>
             )}
@@ -156,7 +156,7 @@ export function ShiftDrawer({ shift, allShifts, ctx, counts, onClose, onToast }:
             )}
           </Box>
 
-          <Box sx={{ mt: "auto", p: "12px 22px 18px", borderTop: "1px solid rgba(29,31,32,0.12)", display: "flex", gap: 1, justifyContent: "flex-end" }}>
+          <Box sx={{ mt: "auto", p: "12px 22px 18px", borderTop: "1px solid ${T.edge}", display: "flex", gap: 1, justifyContent: "flex-end" }}>
             {iHold && (
               <Button
                 variant="outlined"

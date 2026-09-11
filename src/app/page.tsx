@@ -128,7 +128,7 @@ export default function BoardPage() {
 
 function NavBtn({ dir, onClick }: { dir: "prev" | "next"; onClick: () => void }) {
   return (
-    <IconButton onClick={onClick} aria-label={dir === "prev" ? "Previous week" : "Next week"} sx={{ width: 34, height: 34, border: `1px solid ${T.text}`, borderRadius: 0, color: T.text, "&:hover": { background: "rgba(29,31,32,0.06)" } }}>
+    <IconButton onClick={onClick} aria-label={dir === "prev" ? "Previous week" : "Next week"} sx={{ width: 34, height: 34, border: `1px solid ${T.text}`, borderRadius: 0, color: T.text, "&:hover": { background: T.hairline } }}>
       {dir === "prev" ? <ChevronLeft size={16} strokeWidth={1.5} /> : <ChevronRight size={16} strokeWidth={1.5} />}
     </IconButton>
   );
@@ -136,7 +136,7 @@ function NavBtn({ dir, onClick }: { dir: "prev" | "next"; onClick: () => void })
 
 function Notice({ children, icon }: { children: React.ReactNode; icon?: React.ReactNode }) {
   return (
-    <Box sx={{ p: "9px 12px", border: "1px solid rgba(29,31,32,0.25)", background: T.surface, fontSize: 13, display: "flex", gap: 1.25, alignItems: "center" }}>
+    <Box sx={{ p: "9px 12px", border: "1px solid ${T.divider}", background: T.surface, fontSize: 13, display: "flex", gap: 1.25, alignItems: "center" }}>
       {icon}
       <span>{children}</span>
     </Box>
@@ -149,7 +149,7 @@ function Legend({ myRole }: { myRole: "fe" | "mobile" | "be_l1" | null }) {
     <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.75 }}>{swatch}{label}</Box>
   );
   return (
-    <Box sx={{ display: "flex", gap: 2.25, mt: 1.5, fontSize: 12, color: "rgba(29,31,32,0.65)", flexWrap: "wrap", alignItems: "center" }}>
+    <Box sx={{ display: "flex", gap: 2.25, mt: 1.5, fontSize: 12, color: T.muted60, flexWrap: "wrap", alignItems: "center" }}>
       {myRole && item(<Box sx={{ width: 22, height: 12, border: `1.5px dashed ${c.fill}`, background: c.tint }} />, "Open for you")}
       {myRole && item(<Box sx={{ width: 22, height: 12, background: c.fill }} />, "Your seat")}
       {item(<Box sx={{ width: 22, height: 12, background: ROLE.mobile.tint }} />, "Someone else")}

@@ -55,7 +55,7 @@ export function SwapRequestDialog({ open, onClose, giveShift, role, ctx, allShif
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
-      <Box sx={{ p: "20px 22px 16px", borderBottom: "1px solid rgba(29,31,32,0.12)" }}>
+      <Box sx={{ p: "20px 22px 16px", borderBottom: "1px solid ${T.edge}" }}>
         <Typography variant="h3">Request a swap</Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
           You give <b>{shiftShort(giveShift)}</b> and take one of a teammate&apos;s {c.short} seats. They accept or decline.
@@ -68,7 +68,7 @@ export function SwapRequestDialog({ open, onClose, giveShift, role, ctx, allShif
           const name = ctx.users[s.seats[role]!]?.displayName ?? "…";
           return (
             <Box key={s.id} component="button" type="button" onClick={() => setPick(s)} sx={{ all: "unset", cursor: "pointer", display: "flex", alignItems: "center", gap: 1.25, px: 1.5, minHeight: 48, border: `1px solid ${sel ? c.fill : T.divider}`, background: sel ? c.tint : "transparent", "&:hover": { background: c.tint } }}>
-              <ArrowLeftRight size={14} strokeWidth={1.5} style={{ color: "rgba(29,31,32,0.5)", flex: "none" }} />
+              <ArrowLeftRight size={14} strokeWidth={1.5} style={{ color: T.muted, flex: "none" }} />
               <Box sx={{ flex: 1 }}>
                 <Box sx={{ fontWeight: 600, fontSize: 14 }}>{shiftShort(s)}</Box>
                 <Typography variant="caption" color="text.secondary">{shiftKind(s)} · {name}</Typography>
@@ -77,7 +77,7 @@ export function SwapRequestDialog({ open, onClose, giveShift, role, ctx, allShif
           );
         })}
       </Box>
-      <Box sx={{ p: "12px 22px 18px", borderTop: "1px solid rgba(29,31,32,0.12)", display: "flex", gap: 1, justifyContent: "flex-end" }}>
+      <Box sx={{ p: "12px 22px 18px", borderTop: "1px solid ${T.edge}", display: "flex", gap: 1, justifyContent: "flex-end" }}>
         <Button variant="outlined" onClick={onClose}>Cancel</Button>
         <Blueprint sx={{ border: "none" }}>
           <Button variant="contained" disabled={!pick || busy} onClick={send}>Send request</Button>

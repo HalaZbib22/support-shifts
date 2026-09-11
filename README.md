@@ -27,6 +27,8 @@ Past days dim, today gets an accent rule and a "Today" mark. A fairness strip ab
 
 **Calendar** — each person gets a private subscription URL (account menu → Add shifts to calendar). Subscribe once in Google Calendar and the shifts you hold appear automatically, with the other two seat-holders and their roles in the event description, and a 30-minute reminder. Swaps and releases flow through on Google's next refresh. There's also a one-click "Add to calendar" for a single shift in the drawer, and a **Your next shifts** panel on the board showing who you're paired with.
 
+**Dark mode** — Light / Dark / Auto in the account menu, defaulting to the system setting. Both palettes are defined in the same OKLCH space, so dark is a systematic inversion rather than a second set of hand-picked colours: the ground darkens, hairlines invert, and each role ramp keeps its hue while `fill` lifts and `tint` becomes a dark wash. The seat grammar survives the flip — every seat label clears 4.5:1 and every dashed border clears 3:1 in both modes. Tokens are CSS custom properties (`--s-*` in `src/lib/theme.ts`), so switching is one attribute on `<html>`, and an inline script sets it before first paint so there's no light flash.
+
 **Board states** — empty, loading (skeleton) and error all keep the calendar frame so the page never jumps. On a connection error the last good copy stays on screen and claims pause.
 
 Mobile: the board becomes one day at a time with a seven-day tab strip (dots mark your seats and seats open to you), and the nav moves to a bottom bar.

@@ -8,27 +8,30 @@ import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { ArrowLeftRight, CalendarPlus } from "lucide-react";
+import { ArrowLeftRight, CalendarPlus, Monitor, Moon, Sun } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "./AuthProvider";
 import { Brand } from "./Brand";
 import { Initials } from "./Initials";
 import { Blueprint } from "./Blueprint";
 import { CalendarDialog } from "./CalendarDialog";
+import { useColorMode, type ModePref } from "./ColorMode";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { useSwaps } from "@/lib/hooks/useSwaps";
 import { T } from "@/lib/theme";
 import { ROLE_LABEL } from "@/lib/types";
 
 const Badge = ({ n }: { n: number }) =>
   n > 0 ? (
-    <Box component="span" sx={{ minWidth: 18, height: 18, px: 0.6, background: T.accent, color: "#fff", fontSize: 11, fontWeight: 600, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+    <Box component="span" sx={{ minWidth: 18, height: 18, px: 0.6, background: T.accent, color: T.onFill, fontSize: 11, fontWeight: 600, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
       {n}
     </Box>
   ) : null;
 
 function NavLink({ href, label, badge, current }: { href: string; label: string; badge?: number; current: boolean }) {
   return (
-    <Box component={Link} href={href} aria-current={current ? "page" : undefined} sx={{ display: "inline-flex", alignItems: "center", gap: 0.75, fontSize: 14, textDecoration: "none", color: current ? T.text : "rgba(29,31,32,0.6)", fontWeight: current ? 600 : 400, py: 0.5, borderBottom: current ? `2px solid ${T.accent}` : "2px solid transparent", "&:hover": { color: T.text } }}>
+    <Box component={Link} href={href} aria-current={current ? "page" : undefined} sx={{ display: "inline-flex", alignItems: "center", gap: 0.75, fontSize: 14, textDecoration: "none", color: current ? T.text : T.muted60, fontWeight: current ? 600 : 400, py: 0.5, borderBottom: current ? `2px solid ${T.accent}` : "2px solid transparent", "&:hover": { color: T.text } }}>
       {label}
       {badge !== undefined && <Badge n={badge} />}
     </Box>
@@ -42,6 +45,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const { pendingIncoming } = useSwaps(user?.uid ?? null);
   const [menuEl, setMenuEl] = useState<null | HTMLElement>(null);
   const [calOpen, setCalOpen] = useState(false);
+  const { pref, setPref } = useColorMode();
 
   if (loading) {
     return (
@@ -63,7 +67,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column", pb: phone ? "72px" : 0 }}>
-      <Box component="header" sx={{ display: "flex", alignItems: "center", gap: 3, px: { xs: 2, sm: 3 }, py: 1.5, borderBottom: "1px solid rgba(29,31,32,0.12)" }}>
+      <Box component="header" sx={{ display: "flex", alignItems: "center", gap: 3, px: { xs: 2, sm: 3 }, py: 1.5, borderBottom: "1px solid ${T.edge}" }}>
         <Box component={Link} href="/" sx={{ textDecoration: "none" }}><Brand size={phone ? 18 : 20} /></Box>
         {!phone && (
           <Box sx={{ display: "flex", gap: 2.5, ml: 1 }}>
@@ -74,10 +78,24 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <Box component="button" onClick={(e: React.MouseEvent<HTMLElement>) => setMenuEl(e.currentTarget)} sx={{ all: "unset", cursor: "pointer", display: "inline-flex" }} aria-label="Account">
           <Initials name={name} />
         </Box>
-        <Menu anchorEl={menuEl} open={!!menuEl} onClose={() => setMenuEl(null)} slotProps={{ paper: { sx: { border: `1px solid ${T.divider}`, mt: 1, minWidth: 220 } } }}>
+        <Menu anchorEl={menuEl} open={!!menuEl} onClose={() => setMenuEl(null)} slotProps={{ paper: { sx: { border: `1px solid ${T.divider}`, mt: 1, minWidth: 260 } } }}>
           <Box sx={{ px: 2, py: 1 }}>
             <Typography sx={{ fontWeight: 500 }}>{name}</Typography>
             <Typography variant="body2" color="text.secondary">{profile?.role ? ROLE_LABEL[profile.role] : "No role yet"}{profile?.isAdmin ? " · Admin" : ""}</Typography>
+          </Box>
+          <Box sx={{ px: 2, py: 1, borderTop: `1px solid ${T.rule}`, borderBottom: `1px solid ${T.rule}`, mb: 0.5 }}>
+            <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 0.75 }}>Appearance</Typography>
+            <ToggleButtonGroup
+              exclusive
+              size="small"
+              value={pref}
+              onChange={(_, v: ModePref | null) => v && setPref(v)}
+              fullWidth
+            >
+              <ToggleButton value="light" aria-label="Light"><Sun size={14} strokeWidth={1.5} style={{ marginRight: 6 }} /> Light</ToggleButton>
+              <ToggleButton value="dark" aria-label="Dark"><Moon size={14} strokeWidth={1.5} style={{ marginRight: 6 }} /> Dark</ToggleButton>
+              <ToggleButton value="system" aria-label="System"><Monitor size={14} strokeWidth={1.5} style={{ marginRight: 6 }} /> Auto</ToggleButton>
+            </ToggleButtonGroup>
           </Box>
           <MenuItem onClick={() => { setMenuEl(null); setCalOpen(true); }} sx={{ gap: 1.25 }}>
             <CalendarPlus size={15} strokeWidth={1.5} /> Add shifts to calendar
@@ -94,13 +112,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {links.map((l) => {
             const cur = pathname === l.href;
             return (
-              <Box key={l.href} component={Link} href={l.href} sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 0.4, fontSize: 11, textDecoration: "none", color: cur ? T.accent700 : "rgba(29,31,32,0.6)", fontWeight: cur ? 600 : 400, position: "relative" }}>
+              <Box key={l.href} component={Link} href={l.href} sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 0.4, fontSize: 11, textDecoration: "none", color: cur ? T.accent700 : T.muted60, fontWeight: cur ? 600 : 400, position: "relative" }}>
                 {l.label === "Board" && <Box component="span" sx={{ width: 18, height: 14, border: "1.5px solid currentColor", borderTopWidth: 3 }} />}
                 {l.label === "Swaps" && <ArrowLeftRight size={18} strokeWidth={1.5} />}
                 {l.label === "Admin" && <Box component="span" sx={{ width: 16, height: 16, border: "1.5px solid currentColor" }} />}
                 {l.label === "Payouts" && <Box component="span" sx={{ fontFamily: T.fontHeading, fontWeight: 600, fontSize: 16, lineHeight: "18px" }}>$</Box>}
                 {l.label}
-                {l.badge ? <Box component="span" sx={{ position: "absolute", top: 8, right: "calc(50% - 20px)", width: 16, height: 16, background: T.accent, color: "#fff", fontSize: 10, fontWeight: 600, display: "flex", alignItems: "center", justifyContent: "center" }}>{l.badge}</Box> : null}
+                {l.badge ? <Box component="span" sx={{ position: "absolute", top: 8, right: "calc(50% - 20px)", width: 16, height: 16, background: T.accent, color: T.onFill, fontSize: 10, fontWeight: 600, display: "flex", alignItems: "center", justifyContent: "center" }}>{l.badge}</Box> : null}
               </Box>
             );
           })}
