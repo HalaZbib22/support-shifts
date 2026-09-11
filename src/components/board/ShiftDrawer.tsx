@@ -7,7 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { Plus, X } from "lucide-react";
+import { CalendarPlus, Plus, X } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { SLOT_TIMES, weekIdFor } from "@/lib/template";
 import { SLOT_LABEL, DAY_LONG, shiftShort, weekNumber } from "@/lib/format";
@@ -18,6 +18,7 @@ import { claimSeat, releaseSeat, saveHandover, SeatTakenError } from "@/lib/shif
 import type { ShiftWithId } from "@/lib/hooks/useShifts";
 import { Blueprint } from "../Blueprint";
 import { SwapRequestDialog } from "./SwapRequestDialog";
+import { googleCalendarUrl } from "@/lib/calendar";
 
 interface Props {
   shift: ShiftWithId | null;
@@ -156,6 +157,19 @@ export function ShiftDrawer({ shift, allShifts, ctx, counts, onClose, onToast }:
           </Box>
 
           <Box sx={{ mt: "auto", p: "12px 22px 18px", borderTop: "1px solid rgba(29,31,32,0.12)", display: "flex", gap: 1, justifyContent: "flex-end" }}>
+            {iHold && (
+              <Button
+                variant="outlined"
+                component="a"
+                href={googleCalendarUrl(live, SEAT_ROLES.find((r) => live.seats[r] === ctx.uid)!, Object.fromEntries(Object.entries(ctx.users).map(([k, v]) => [k, v.displayName])))}
+                target="_blank"
+                rel="noopener"
+                startIcon={<CalendarPlus size={14} strokeWidth={1.5} />}
+                sx={{ mr: "auto" }}
+              >
+                Add to calendar
+              </Button>
+            )}
             <Button variant="outlined" onClick={onClose}>Close</Button>
             {canEditNote && (
               <Blueprint sx={{ border: "none" }}>

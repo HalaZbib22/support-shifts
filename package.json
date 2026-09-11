@@ -16,6 +16,7 @@
     "@mui/material-nextjs": "^6.1.6",
     "date-fns": "^4.1.0",
     "firebase": "^11.0.1",
+    "firebase-admin": "^13.0.1",
     "lucide-react": "^0.454.0",
     "next": "^15.0.3",
     "react": "^19.0.0",

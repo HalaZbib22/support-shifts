@@ -25,6 +25,8 @@ Past days dim, today gets an accent rule and a "Today" mark. A fairness strip ab
 
 **Payouts** — one row per person, one column per month, $20 per shift. Only locked weeks count; seats in published-but-unlocked weeks show as "pending". CSV export. Non-admins see only their own row.
 
+**Calendar** — each person gets a private subscription URL (account menu → Add shifts to calendar). Subscribe once in Google Calendar and the shifts you hold appear automatically, with the other two seat-holders and their roles in the event description, and a 30-minute reminder. Swaps and releases flow through on Google's next refresh. There's also a one-click "Add to calendar" for a single shift in the drawer, and a **Your next shifts** panel on the board showing who you're paired with.
+
 **Board states** — empty, loading (skeleton) and error all keep the calendar frame so the page never jumps. On a connection error the last good copy stays on screen and claims pause.
 
 Mobile: the board becomes one day at a time with a seven-day tab strip (dots mark your seats and seats open to you), and the nav moves to a bottom bar.
@@ -58,7 +60,22 @@ npm run dev
 
 The rules deliberately don't let anyone grant themselves admin, so the first one is set by hand: Firestore console → `users` → your document → `isAdmin` = `true`. Refresh; the **Admin** tab appears. Everyone else's roles and admin flags are set from there.
 
-### 4. Deploy to Vercel
+### 4. Calendar feed (optional)
+
+The `.ics` route runs server-side, where there's no user session, so it needs the Firebase Admin SDK. Firebase console → Project settings → **Service accounts** → Generate new private key. From the downloaded JSON, set three more variables (these are real secrets — never prefix them with `NEXT_PUBLIC_`):
+
+```
+FIREBASE_ADMIN_PROJECT_ID=<project_id>
+FIREBASE_ADMIN_CLIENT_EMAIL=<client_email>
+FIREBASE_ADMIN_PRIVATE_KEY=<private_key, newlines as \n>
+NEXT_PUBLIC_APP_URL=https://<your-domain>
+```
+
+Without these the app works fine; the feed URL just returns 503.
+
+To limit sign-in to one Google Workspace domain, also set `NEXT_PUBLIC_ALLOWED_DOMAIN=yourcompany.com`. That filters the Google account picker — for real enforcement, add an email check to the `users` create rule.
+
+### 5. Deploy to Vercel
 
 ```bash
 npm i -g vercel
@@ -66,6 +83,8 @@ vercel            # link the project
 vercel env add NEXT_PUBLIC_FIREBASE_API_KEY        # repeat for all six
 vercel --prod
 ```
+
+Set `NEXT_PUBLIC_APP_URL` to the live URL so the calendar links point at production rather than localhost.
 
 Then in Firebase → Authentication → Settings → **Authorized domains**, add your `*.vercel.app` domain (and any custom domain), or Google sign-in will be rejected in production.
 
@@ -88,6 +107,8 @@ The `NEXT_PUBLIC_*` values are public by design — Firebase security lives in t
 | `shifts` | `2026-W37_sat_morning` | weekId, date, day, slot, start, end, seats{fe,mobile,be_l1}, handover?, swapId? |
 | `swaps` | auto | role, fromUid, toUid, giveShiftId, takeShiftId, status, createdAt, resolvedAt |
 
+`users.calendarToken` is an unguessable id that appears in that person's feed URL; calendar apps can't sign in, so the token is what identifies them. Resetting it from the dialog invalidates the old link immediately.
+
 The shift template lives in `src/lib/template.ts`: weekday evenings 18–23, weekends 8–13 / 13–18 / 18–23 — 11 shifts, 33 seats a week.
 
 ### Rules enforce all of it server-side
@@ -98,7 +119,7 @@ Claiming and releasing is limited to your own role's seat in a published week; s
 
 ```
 src/
-  app/            board (/), swaps, admin, payouts
+  app/            board (/), swaps, admin, payouts, api/calendar/[token]
   components/     AppShell, Blueprint frame, Tag, Toast, board/*
   lib/            firebase, types, template, board model, shifts, swaps, hooks/
 firestore.rules   the server-side half of every rule above

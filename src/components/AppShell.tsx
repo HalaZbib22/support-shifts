@@ -8,12 +8,13 @@ import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { ArrowLeftRight } from "lucide-react";
+import { ArrowLeftRight, CalendarPlus } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "./AuthProvider";
 import { Brand } from "./Brand";
 import { Initials } from "./Initials";
 import { Blueprint } from "./Blueprint";
+import { CalendarDialog } from "./CalendarDialog";
 import { useSwaps } from "@/lib/hooks/useSwaps";
 import { T } from "@/lib/theme";
 import { ROLE_LABEL } from "@/lib/types";
@@ -40,6 +41,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const phone = useMediaQuery("(max-width:720px)");
   const { pendingIncoming } = useSwaps(user?.uid ?? null);
   const [menuEl, setMenuEl] = useState<null | HTMLElement>(null);
+  const [calOpen, setCalOpen] = useState(false);
 
   if (loading) {
     return (
@@ -77,8 +79,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Typography sx={{ fontWeight: 500 }}>{name}</Typography>
             <Typography variant="body2" color="text.secondary">{profile?.role ? ROLE_LABEL[profile.role] : "No role yet"}{profile?.isAdmin ? " · Admin" : ""}</Typography>
           </Box>
+          <MenuItem onClick={() => { setMenuEl(null); setCalOpen(true); }} sx={{ gap: 1.25 }}>
+            <CalendarPlus size={15} strokeWidth={1.5} /> Add shifts to calendar
+          </MenuItem>
           <MenuItem onClick={() => { setMenuEl(null); signOutUser(); }}>Sign out</MenuItem>
         </Menu>
+        <CalendarDialog open={calOpen} onClose={() => setCalOpen(false)} uid={user.uid} token={profile?.calendarToken} />
       </Box>
 
       <Box component="main" sx={{ flex: 1 }}>{children}</Box>

@@ -25,3 +25,8 @@ export function db(): Firestore {
 }
 
 export const googleProvider = new GoogleAuthProvider();
+// Restrict the account picker to one Google Workspace domain when configured.
+// This is a UI hint only — the Firestore rules are what actually enforce it.
+if (process.env.NEXT_PUBLIC_ALLOWED_DOMAIN) {
+  googleProvider.setCustomParameters({ hd: process.env.NEXT_PUBLIC_ALLOWED_DOMAIN });
+}

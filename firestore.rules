@@ -18,6 +18,8 @@ service cloud.firestore {
         && request.auth.uid == uid
         && request.resource.data.role == null
         && request.resource.data.isAdmin == false;
+      // A user may change their own profile except role and isAdmin — that includes
+      // minting or resetting their own calendarToken.
       allow update: if isAdmin()
         || (request.auth.uid == uid
             && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'isAdmin']));

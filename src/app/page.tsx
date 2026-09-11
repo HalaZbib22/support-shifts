@@ -14,6 +14,7 @@ import { DesktopBoard } from "@/components/board/DesktopBoard";
 import { PhoneBoard } from "@/components/board/PhoneBoard";
 import { ShiftDrawer } from "@/components/board/ShiftDrawer";
 import { FairnessStrip } from "@/components/board/FairnessStrip";
+import { MyShifts } from "@/components/MyShifts";
 import { BoardEmpty, BoardSkeleton, BoardErrorBanner } from "@/components/board/BoardStates";
 import { useUsers } from "@/lib/hooks/useUsers";
 import { useWeeks } from "@/lib/hooks/useWeeks";
@@ -93,6 +94,8 @@ export default function BoardPage() {
           <FairnessStrip users={users} counts={counts} uid={uid} month={now} />
         </Box>
       )}
+
+      <MyShifts shifts={shifts} weeks={weeks ?? {}} users={users} uid={uid} now={now} onOpen={setOpenShift} />
 
       {/* Notices */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mb: 1.5 }}>

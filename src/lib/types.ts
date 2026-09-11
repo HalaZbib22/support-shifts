@@ -23,6 +23,8 @@ export interface UserDoc {
   photoURL: string | null;
   role: Role | null;
   isAdmin: boolean;
+  /** Unguessable id in the personal calendar-feed URL. Absent until they open Calendar settings. */
+  calendarToken?: string | null;
 }
 
 export type WeekStatus = "draft" | "open" | "locked";
